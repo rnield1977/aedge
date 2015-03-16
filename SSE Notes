@@ -1,0 +1,32 @@
+Out of sample SSE
+SSE <- sum((PointsPrediction - NBA$PTS)^2)
+SST <- sum((mean(NBA$PTS) - NBA_test$PTS)^2)
+R2 <- 1 - SSE/SST
+RMSE <- sqrt(SSE/nrow(NBA_test))
+
+Relative Error
+(Observed ILI - Estimated ILI)/Observed ILI
+
+Sensitivity
+True Positives / True Positives + False Negatives
+
+Specificity
+True Negatives / True Negatives + False Positives
+
+To get the confusion Matrix 
+table(qualityTrain$PoorCare, predictTrain > 0.5) 
+
+    FALSE TRUE
+  0    70    4
+  1    15   10
+  
+  Compute Sensitivity (Measure Classify Possitive Correctly)
+  10/25
+  
+  Compute Specificity (Measure Classify Negative Correctly)
+  70/74
+    
+    
+    
+  
+  
