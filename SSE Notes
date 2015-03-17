@@ -1,3 +1,5 @@
+Week 1 Notes
+--------------------------------------------------------------------------------------
 Out of sample SSE
 SSE <- sum((PointsPrediction - NBA$PTS)^2)
 SST <- sum((mean(NBA$PTS) - NBA_test$PTS)^2)
@@ -6,6 +8,9 @@ RMSE <- sqrt(SSE/nrow(NBA_test))
 
 Relative Error
 (Observed ILI - Estimated ILI)/Observed ILI
+
+Week 2 Notes
+--------------------------------------------------------------------------------------
 
 Sensitivity
 True Positives / True Positives + False Negatives
