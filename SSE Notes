@@ -13,18 +13,37 @@ True Positives / True Positives + False Negatives
 Specificity
 True Negatives / True Negatives + False Positives
 
+ TN FP
+ FN TP
+
+False Negative Error Rate = FN / TP+ FN
+False Positive Error Rate = FP / TN + FP
+
 To get the confusion Matrix 
 table(qualityTrain$PoorCare, predictTrain > 0.5) 
 
     FALSE TRUE
-  0    70    4
+  0    70    4 
   1    15   10
+  
+ 
   
   Compute Sensitivity (Measure Classify Possitive Correctly)
   10/25
   
   Compute Specificity (Measure Classify Negative Correctly)
   70/74
+  
+Creating ROCR Example:
+library(ROCR)
+ROCRpred = prediction(predictTrain, qualityTrain$PoorCare)
+ROCRperf = performance((ROCRpred,"tpr","fpr"))
+plot(ROCRperf, colorize="TRUE")
+or 
+plot(ROCRperf, colorize="TRUE", print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+
+Area Under Curve
+auc = as.numeric(performance(ROCRpred, "auc")@y.values)
     
     
     
