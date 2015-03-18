@@ -51,6 +51,7 @@ Area Under Curve
 auc = as.numeric(performance(ROCRpred, "auc")@y.values)
     
     
-    
-  
+#Using the Mice Package
+library(mice)
+imputed = complete(mice(simple))
   
