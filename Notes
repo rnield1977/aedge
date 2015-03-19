@@ -9,6 +9,8 @@ RMSE <- sqrt(SSE/nrow(NBA_test))
 Relative Error
 (Observed ILI - Estimated ILI)/Observed ILI
 
+Use step() to find model
+
 Week 2 Notes
 --------------------------------------------------------------------------------------
 
