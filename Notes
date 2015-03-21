@@ -76,6 +76,9 @@ Steps for the odds ratio:
 2- Odds Ratio is OR <- exp(-1.700629)
 3- Prediction probability
   1/(1+exp(1.700629))
+  
+  
+
 
 2- 
 
