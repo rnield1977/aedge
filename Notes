@@ -44,7 +44,7 @@ table(qualityTrain$PoorCare, predictTrain > 0.5)
 Creating ROCR Example:
 library(ROCR)
 ROCRpred = prediction(predictTrain, qualityTrain$PoorCare)
-ROCRperf = performance((ROCRpred,"tpr","fpr"))
+ROCRperf = performance(ROCRpred,"tpr","fpr")
 plot(ROCRperf, colorize="TRUE")
 or 
 plot(ROCRperf, colorize="TRUE", print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
@@ -56,4 +56,27 @@ auc = as.numeric(performance(ROCRpred, "auc")@y.values)
 #Using the Mice Package
 library(mice)
 imputed = complete(mice(simple))
+
+
+#Better way of filtering based on columns
+nonvars = c("year", "songtitle", "artistname", "songID", "artistID")
+songsTrain = songsTrain[ , !(names(songsTrain) %in% nonvars) ]
+OR
+SongsLog2 = glm(Top10 ~ . - loudness, data=SongsTrain, family=binomial)
+
+
+Get the Odds Ratios for each coef
+exp(coef(mylogit))
+Can do.
+exp(cbind(OR = coef(mylogit), confint(mylogit)))
+
+Steps for the odds ratio:
+1- Take coef of the model -4.2411574 + 0.3869904*male + 0.8867192*race - 0.0001756*age + 0.4433007*state2 + 0.8349797*state3 - 3.3967878*state4 - 0.1238867*time.served + 0.0802954*max.sentence + 1.6119919*multiple.offenses + 0.6837143*crime2 - 0.2781054*crime3 - 0.0117627*crime4 =  -1.700629
+
+2- Odds Ratio is OR <- exp(-1.700629)
+3- Prediction probability
+  1/(1+exp(1.700629))
+
+2- 
+
   
