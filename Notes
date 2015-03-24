@@ -1,4 +1,4 @@
-Week 1 Notes
+Week 2 Notes
 --------------------------------------------------------------------------------------
 Out of sample SSE
 SSE <- sum((PointsPrediction - NBA$PTS)^2)
@@ -11,7 +11,7 @@ Relative Error
 
 Use step() to find model
 
-Week 2 Notes
+Week 3 Notes
 --------------------------------------------------------------------------------------
 
 Sensitivity
@@ -94,5 +94,7 @@ Set Profit under Logistic regression probabilities.
 
 Example of sorting via a cutoff
 cutoff = sort(highInterest$predicted.risk, decreasing=FALSE)[100]
+
+Week 4
 
   
