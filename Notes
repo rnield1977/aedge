@@ -80,6 +80,19 @@ Steps for the odds ratio:
   
 
 
-2- 
+Example 2 of Mice
+vars.for.imputation = setdiff(names(loans), "not.fully.paid")
+imputed = complete(mice(loans[vars.for.imputation]))
+loans[vars.for.imputation] = imputed
+
+
+
+Set Profit under Logistic regression probabilities.
+> test$profit = exp(test$int.rate*3) - 1
+> test$profit[test$not.fully.paid == 1] = -1
+
+
+Example of sorting via a cutoff
+cutoff = sort(highInterest$predicted.risk, decreasing=FALSE)[100]
 
   
