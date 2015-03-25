@@ -97,4 +97,63 @@ cutoff = sort(highInterest$predicted.risk, decreasing=FALSE)[100]
 
 Week 4
 
-  
+Cart Example
+library(rpart)
+library(rpart.plot)
+StevensTree <- rpart(Reverse ~ Circuit + Issue + Petitioner + respondent + LowerCourt + Unconst, data=train, method="class", minbucket=25)
+
+prp(StevensTree)
+PredictCart = predict(StevensTree, newdata=test, type="class")
+table(test$Reverse, PredictCart)
+
+PredictROC <- predict(StevensTree, newdata=test)
+pred <- prediction(PredictROC[,2], test$Reverse)
+perf <- performance(pred,"tpr","fpr")
+plot(perf, colorize=TRUE)
+
+as.numeric(performance(pred, "auc")@y.values)
+
+Random Forrest
+library(randomForest)
+StevensForrest <- randomForest(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data=train, nodesize=25, ntree=200)
+> PredictForest <- predict(StevensForest, newdata=test)
+PredictForest <- predict(StevensForrest, newdata=test)
+
+
+k-Fold Cross- Validation
+cp is like R2 and AIC smaller is better
+library(caret)
+library(e1071)
+numFolds <- trainControl(method="cv", number=10)
+cpGrid <- expand.grid(.cp=seq(0.01,0.5,0.01))
+train(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data=train, method="rpart", trControl=numFolds, tuneGrid=cpGrid)
+
+StevensTreeCV <- rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data=train, method="class", cp=0.18 )
+
+PredictCV <- predict(StevensTreeCV, newdata=test, type="class")
+table(test$Reverse, PredictCV)
+
+# To get precentage of of particular variable
+Example:
+table(Claims$bucket2009) / nrow(Claims)
+
+#Penalty Matrix Example
+
+PenaltyMatrix = matrix(c(0,1,2,3,4,2,0,1,2,3,4,2,0,1,2,6,4,2,0,1,8,6,4,2,0), byrow=TRUE, nrow=5)
+
+as.matrix(table(ClaimsTest$bucket2009, ClaimsTest$bucket2008)) * PenaltyMatrix
+
+sum(as.matrix(table(ClaimsTest$bucket2009, ClaimsTest$bucket2008)) * PenaltyMatrix)/nrow(ClaimsTest)
+
+#Example
+We then want to get a higher then
+(110138 + 10721 + 2774 + 1539 + 104 )/ nrow(ClaimsTest)
+and lower then
+sum(as.matrix(table(ClaimsTest$bucket2009, ClaimsTest$bucket2008)) * PenaltyMatrix)/nrow(ClaimsTest)
+
+--------------
+Standard Basline
+NOTE this is the first column of the matrix.
+PM <- c(0,2,4,6,8)
+table(ClaimsTest$bucket2009) * PM
+sum(table(ClaimsTest$bucket2009) * PM) / nrow(ClaimsTest)
