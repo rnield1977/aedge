@@ -157,3 +157,7 @@ NOTE this is the first column of the matrix.
 PM <- c(0,2,4,6,8)
 table(ClaimsTest$bucket2009) * PM
 sum(table(ClaimsTest$bucket2009) * PM) / nrow(ClaimsTest)
+
+
+---------------
+Example of plotting fitted value as well as adding $ to pch
