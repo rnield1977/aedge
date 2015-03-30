@@ -64,6 +64,7 @@ songsTrain = songsTrain[ , !(names(songsTrain) %in% nonvars) ]
 OR
 SongsLog2 = glm(Top10 ~ . - loudness, data=SongsTrain, family=binomial)
 
+use response on predictions
 
 Get the Odds Ratios for each coef
 exp(coef(mylogit))
@@ -161,3 +162,35 @@ sum(table(ClaimsTest$bucket2009) * PM) / nrow(ClaimsTest)
 
 ---------------
 Example of plotting fitted value as well as adding $ to pch
+
+
+---------------
+
+Example of plot of final model using caret
+best.tree <- tr$finalModel
+prp(best.tree)
+
+---------------
+Example of logistic regression interaction
+LogModel2 = glm(voting ~ sex + control + sex:control, data=gerber, family="binomial")
+
+
+-----------------
+When taking ROCR for CART be sure to remove type="class" when predicting
+
+
+--------------
+One metric that we can look at is the number of times, aggregated over all of the trees in the random forest model, that a certain variable is selected for a split. To view this metric, run the following lines of R code (replace "MODEL" with the name of your random forest model):
+
+vu = varUsed(MODEL, count=TRUE)
+vusorted = sort(vu, decreasing = FALSE, index.return = TRUE)
+dotchart(vusorted$x, names(MODEL$forest$xlevels[vusorted$ix]))
+
+
+Show model impurity
+A different metric we can look at is related to "impurity", which measures how homogenous each bucket or leaf of the tree is. In each tree in the forest, whenever we select a variable and perform a split, the impurity is decreased. Therefore, one way to measure the importance of a variable is to average the reduction in impurity, taken over all the times that variable is selected for splitting in all of the trees in the forest. To compute this metric, run the following command in R (replace "MODEL" with the name of your random forest model):
+varImpPlot(MODEL)
+
+
+-----------------------
+
