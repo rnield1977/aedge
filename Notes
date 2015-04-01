@@ -194,3 +194,51 @@ varImpPlot(MODEL)
 
 -----------------------
 
+Week 5 
+
+Bag of Words
+
+Always do string as factor is false
+
+library(tm)
+library(SnowballC)
+
+corpus <- Corpus(VectorSource(tweets$Tweet))
+corpus[[1]]
+corpus <- tm_map(corpus,tolower)
+corpus = tm_map(corpus, PlainTextDocument)
+corpus <- tm_map(corpus,removePunctuation)
+corpus <- tm_map(corpus, removeWords, c("apple",stopwords("english")))
+corpus <- tm_map(corpus, stemDocument)
+
+
+frequencies <- DocumentTermMatrix(corpus)
+
+frequencies
+
+# Look at matrix 
+
+inspect(frequencies[1000:1005,505:515])
+findFreqTerms(frequencies, lowfreq=20)
+
+sparse = removeSparseTerms(frequencies, 0.995)
+sparse
+
+tweetsSparse = as.data.frame(as.matrix(sparse))
+
+colnames(tweetsSparse) = make.names(colnames(tweetsSparse))
+
+tweetsSparse$Negative = tweets$Negative
+
+set.seed(123)
+
+split = sample.split(tweetsSparse$Negative, SplitRatio = 0.7)
+
+trainSparse = subset(tweetsSparse, split==TRUE)
+testSparse = subset(tweetsSparse, split==FALSE)
+
+########
+String Wrap
+strwrap(emails$email[1])
+
+
