@@ -208,7 +208,7 @@ corpus[[1]]
 corpus <- tm_map(corpus,tolower)
 corpus = tm_map(corpus, PlainTextDocument)
 corpus <- tm_map(corpus,removePunctuation)
-corpus <- tm_map(corpus, removeWords, c("apple",stopwords("english")))
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
 corpus <- tm_map(corpus, stemDocument)
 
 
@@ -241,4 +241,17 @@ testSparse = subset(tweetsSparse, split==FALSE)
 String Wrap
 strwrap(emails$email[1])
 
+
+#######
+Examples of Row Sums
+wikiWords2$NumWordsAdded = rowSums(as.matrix(dtmAdded))
+wikiWords2$NumWordsRemoved = rowSums(as.matrix(dtmRemoved))
+
+
+
+######
+training set predictions
+tree <- rpart(trial~., data=train, method="class",)
+# Note, no type given
+trainp <- predict(tree)
 
