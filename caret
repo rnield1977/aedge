@@ -1,0 +1,31 @@
+
+ library(C50)
+ data(churn)
+ predictors <- names(churnTrain)[names(churnTrain) != "churn")
+ 
+ #Split Data
+ inTrainingSet <- createDataPartition(allData$churn, p=.75, list=FALSE)
+ train <- allData[inTrainingSet,]
+ test <- allData[-inTrainingSet,]
+ 
+ #Preprocess
+ numerics <- c("account_length","total_day_calls","total_night_calls")
+ procValues <- preProcess(churnTrain[,numerics], method=c("center","scale","YeoJohnson"))
+ trainScaled <- predict(procValues, churnTrain[,numerics])
+ testScaled <- predict(procValues, churnTest[,numerics])
+ 
+ gbm
+ glmTune <- train(x=churnTrain[,predictors], y=churnTrain$churn, method="gbm")
+ or
+ gmbTune <- train(churn ~.,data=churnTrain, method="gbm", verbose=FALSE)
+ 
+ ###Change the resampling
+ ctrl <- trainControl(method="repeatedcv", repeats=5)
+ gbmTune <- train(churn ~ ., data=churnTrain, method="gbm", verbose=FALSE,trControl=ctrl)
+ 
+ 
+ ctrl <- trainControl(method="repeatedcv", repeats=5, classProbs = TRUE, summaryFunction=twoClassSummary)
+ grid <- expand.grid(.interaction.depth = seq(1,7, by = 2), .n.trees = seq(100,1000, by=50), .shrinkage=c(0.01,0.1))
+ 
+ 
+ gbmTune <- train(churn ~ ., data=churnTrain, method="gbm", metric="ROC", verbose=FALSE, trControl=ctrl, tuneGrid=grid)

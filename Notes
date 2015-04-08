@@ -49,6 +49,12 @@ plot(ROCRperf, colorize="TRUE")
 or 
 plot(ROCRperf, colorize="TRUE", print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
 
+#### FOR TREES
+spamRFPred <- predict(spamRF, newdata=train, type="prob") for RandomForrest
+no class for CART 
+USE SECOND PARAMETER
+
+
 Area Under Curve
 auc = as.numeric(performance(ROCRpred, "auc")@y.values)
     
@@ -214,6 +220,8 @@ corpus <- tm_map(corpus, stemDocument)
 
 frequencies <- DocumentTermMatrix(corpus)
 
+or dtm <- DocumentTermMatrix(corpus)
+
 frequencies
 
 # Look at matrix 
@@ -255,3 +263,114 @@ tree <- rpart(trial~., data=train, method="class",)
 # Note, no type given
 trainp <- predict(tree)
 
+
+################
+Week 6
+
+With Hierarchical clustering you would prefer to choose the cluster with the most distance between the splits
+** To remove unneeded columns set that column to NULL
+# Remove unnecessary variables
+movies$ID = NULL
+movies$ReleaseDate = NULL
+movies$VideoReleaseDate = NULL
+movies$IMDB = NULL
+
+# Remove duplicates
+movies = unique(movies)
+
+Hierarchical clustering
+distances <- dist(movies[2:20], method="euclidean")
+clusterMovies <- hclust(distances, method = "ward") 
+plot(clusterMovies)
+
+clusterGroups = cutree(clusterMovies, k=10)
+
+tapply(movies$Action, clusterGroups,mean)
+
+### Now see where a paticular row number falls
+
+subset(movies, Title=="Men in Black (1997)")
+Gives us 257
+clusterGroups[257]
+
+### Now grab just the cluster
+cluster2 <- subset(movies, clusterGroups ==2)
+
+### View the cluster
+cluster2[1:10,]$Title
+
+
+### Clustering with Matrix
+flowerMatrix <- as.matrix(flower)
+flowerVector <- as.vector(flowerMatrix)
+
+
+rect.hclust(clusterIntensity, k=3, border="red")
+flowerClusters <- cutree(clusterIntensity, k=3)
+
+See how the clustering is broken up.
+tapply(flowerVector,flowerClusters,mean)
+
+#view the cluster
+dim(flowerClusters) = c(50,50)
+image(flowerClusters, axes=FALSE)
+
+# View image in greyscale.
+image(flowerMatrix, axes=FALSE, col = grey(seq(0,1,length=256)))  
+
+
+Dist issues.
+Error: cannot allocate vector of size 498.0 Gb
+n=365636
+n*(n-1)/2
+
+#kmeans example
+k = 5
+KMC <- kmeans(healthyVector,centers=k, iter.max=1000)
+str(KMC)
+healthyClusters <- KMC$cluster
+dim(healthyClusters) <- c(nrow(healthyMatrix),ncol(healthyMatrix))
+image(healthyClusters, axes=FALSE, col=rainbow(k))
+
+
+## Predicting
+library(flexclust)
+KMC.kcca <- as as.kcca(KMC,healthyVector)
+tumorClusters <- predict(KMC.kcca, newdata=tumorVector)
+dim(tumorClusters) <- c(nrow(tumorMatrix), ncol(tumorMatrix))
+
+##Predicting Stocks
+  #Get rid of the dependants
+  limitedTrain$PositiveDec = NULL
+  limitedTest$PositiveDec = NULL
+  library(caret)
+  #Normalize
+  preproc = preProcess(limitedTrain)
+  normTrain = predict(preproc, limitedTrain)
+  normTest = predict(preproc, limitedTest)
+  #Cluster
+  km <- kmeans(normTrain, centers=3)
+  library(flexclust)
+  km.kcca = as.kcca(km, normTrain)
+  clusterTrain = predict(km.kcca)
+  clusterTest = predict(km.kcca, newdata=normTest)
+  stocksTrain1 <- subset(stocksTrain, clusterTest == 1)
+  stocksTrain2 <- subset(stocksTrain, clusterTest == 2)
+  stocksTrain3 <- subset(stocksTrain, clusterTest == 3)
+  stocksTest1 <- subset(stocksTest, clusterTest == 1)
+  stocksTest2 <- subset(stocksTest, clusterTest == 2)
+  stocksTest3 <- subset(stocksTest, clusterTest == 3)
+  
+  #Compute Cluster Specific 
+  AllPredictions = c(PredictTest1, PredictTest2, PredictTest3)
+  AllOutcomes = c(stocksTest1$PositiveDec, stocksTest2$PositiveDec, stocksTest3$PositiveDec)
+
+##### Get means of a col
+tail(sort(colMeans(dkc7)))
+
+
+
+##### Normalize a dataframe
+library(caret)
+preproc = preProcess(airlines)
+airlinesNorm = predict(preproc, airlines)
