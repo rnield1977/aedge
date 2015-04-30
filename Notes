@@ -280,7 +280,7 @@ movies = unique(movies)
 
 Hierarchical clustering
 distances <- dist(movies[2:20], method="euclidean")
-clusterMovies <- hclust(distances, method = "ward") 
+clusterMovies <- hclust(distances, method = "ward.D") 
 plot(clusterMovies)
 
 clusterGroups = cutree(clusterMovies, k=10)
@@ -374,3 +374,203 @@ tail(sort(colMeans(dkc7)))
 library(caret)
 preproc = preProcess(airlines)
 airlinesNorm = predict(preproc, airlines)
+
+#### Kaggle #####
+Bag of words combining Testing and Training
+
+CorpusHeadline = Corpus(VectorSource(c(Train$Headline, Test$Headline)))
+CorpusHeadline = tm_map(CorpusHeadline, tolower)
+CorpusHeadline = tm_map(CorpusHeadline, PlainTextDocument)
+CorpusHeadline = tm_map(CorpusHeadline, removePunctuation)
+CorpusHeadline = tm_map(CorpusHeadline, removeWords, stopwords("english"))
+CorpusHeadline = tm_map(CorpusHeadline, stemDocument)
+dtm = DocumentTermMatrix(CorpusHeadline)
+sparse = removeSparseTerms(dtm, 0.99)
+HeadlineWords = as.data.frame(as.matrix(sparse))
+colnames(HeadlineWords) = make.names(colnames(HeadlineWords))
+HeadlineWordsTrain = head(HeadlineWords, nrow(NewsTrain))
+HeadlineWordsTest = tail(HeadlineWords, nrow(NewsTest))
+
+
+
+###Week 7
+ggplot(WHO, aes(x = FertilityRate, y = Under15)) + geom_point()
+
+geom_line()
+geom_point(color = "blue", size = 3, shape = 17)
+ggtitle("Fertility Rate vs. Gross National Income")
+stat_smooth(method = "lm")
+#Change error level
+stat_smooth(method = "lm", level = 0.99)
+#turn off
+stat_smooth(method = "lm", se = FALSE)
+#Make Orange.
+stat_smooth(method = "lm", colour = "orange")
+
+#Date Conersion example
+mvt$Date <- strptime(mvt$Date, format="%m/%d/%y %H:%M")
+#Get Hour from the date
+mvt$Date$hour
+
+#Group all data in one line
+ggplot(WeekdayCounts, aes(x=Var1, y=Freq)) + geom_line(aes(group=1))
+
+#ordered Factor
+
+WeekdayCounts$Var1 <- factor(WeekdayCounts$Var1, ordered=true, levels=c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"))
+
+ggplot(WeekdayCounts, aes(x=Var1, y=Freq)) + geom_line(aes(group=1)) + xlab("Day of week") + ylab("Crime")
+
+#Example of adding color
+ggplot(DayHourCounts, aes(x=Hour, y=Freq)) + geom_line(aes(group=Var1, color=Var1, size=2)) 
+
+#Adding a heatmap
+ggplot(DayHourCounts, aes(x=Hour, y=Freq)) + geom_line(aes(group=Var1, color=Var1, size=2)) 
+#2
+ggplot(DayHourCounts, aes(x=Hour, y=Var1)) + geom_tile(aes(fill=Freq)) + scale_fill_gradient(name="Total MV Thefts") + theme(axis.title.y = element_blank()
+
+#Change colors
+
+ggplot(DayHourCounts, aes(x=Hour, y=Var1)) + geom_tile(aes(fill=Freq)) + scale_fill_gradient(name="Total MV Thefts", low="white", high="red") + theme(axis.title.y = element_blank())
+
+
+### Mapping geo
+library(maps)
+library(ggmap)
+chicago <- get_map(location="chicago", zoom=11)
+ggmap(chicago)
+
+###
+
+Adding point to map.
+ggmap(chicago) + geom_point(data=mvt[1:100,], aes(x=Longitude, y=Latitude))
+
+# Plot these points on our map:
+ggmap(chicago) + geom_point(data = LatLonCounts, aes(x = Long, y = Lat, color = Freq, size=Freq))
+
+# Change the color scheme:
+ggmap(chicago) + geom_point(data = LatLonCounts, aes(x = Long, y = Lat, color = Freq, size=Freq)) + scale_colour_gradient(low="yellow", high="red")
+
+# We can also use the geom_tile geometry
+ggmap(chicago) + geom_tile(data = LatLonCounts, aes(x = Long, y = Lat, alpha = Freq), fill="red")
+
+## United States
+
+# Load the map of the US
+statesMap = map_data("state")
+
+str(statesMap)
+
+# Plot the map:
+ggplot(statesMap, aes(x = long, y = lat, group = group)) + geom_polygon(fill = "white", color = "black") 
+
+## Merge Example
+
+murderMap = merge(statesMap, murders, by="region")
+
+ggplot(murderMap, aes(x = long, y = lat, group = group, fill = Murders)) + geom_polygon(color = "black") + scale_fill_gradient(low = "black", high = "red", guide = "legend")
+
+# Plot a map of the population:
+ggplot(murderMap, aes(x = long, y = lat, group = group, fill = Population)) + geom_polygon(color = "black") + scale_fill_gradient(low = "black", high = "red", guide = "legend")
+
+# Create a new variable that is the number of murders per 100,000 population:
+murderMap$MurderRate = murderMap$Murders / murderMap$Population * 100000
+
+# Redo our plot with murder rate:
+ggplot(murderMap, aes(x = long, y = lat, group = group, fill = MurderRate)) + geom_polygon(color = "black") + scale_fill_gradient(low = "black", high = "red", guide = "legend")
+
+# Redo the plot, removing any states with murder rates above 10:
+ggplot(murderMap, aes(x = long, y = lat, group = group, fill = MurderRate)) + geom_polygon(color = "black") + scale_fill_gradient(low = "black", high = "red", guide = "legend", limits = c(0,10))
+
+
+### Bar Chart with slanted titles and adjusted vjust
+ggplot(intl, aes(x=Region, y=PercentOfIntl)) +
+geom_bar(stat="identity", fill="dark blue") +
+geom_text(aes(label=PercentOfIntl), vjust=-0.4) +
+ylab("Percent of International Students") +
+theme(axis.title.x = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+## Transform example to reorder desc by PercentofInt
+intl = transform(intl, Region = reorder(Region, -PercentOfIntl,mean))
+
+
+### More Mapping Examples
+
+# Lets "fix" that in the intlall dataset
+intlall$Citizenship[intlall$Citizenship=="China (People's Republic Of)"] = "China"
+
+# We'll repeat our merge and order from before
+world_map = merge(map_data("world"), intlall, 
+                  by.x ="region",
+                  by.y = "Citizenship")
+world_map = world_map[order(world_map$group, world_map$order),]
+
+ggplot(world_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=Total), color="black") +
+  coord_map("mercator")
+
+
+# We can try other projections - this one is visually interesting
+ggplot(world_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=Total), color="black") +
+  coord_map("ortho", orientation=c(20, 30, 0))
+
+ggplot(world_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=Total), color="black") +
+  coord_map("ortho", orientation=c(-37, 175, 0))
+
+
+#### Usage of Melt
+
+# First few rows of our melted households dataframe
+head(melt(households, id="Year"))
+
+households[,1:3]
+
+melt(households, id="Year")[1:10,3]
+melt(households, id="Year")[1:10,]
+
+# Plot it
+ggplot(melt(households, id="Year"),       
+       aes(x=Year, y=value, color=variable)) +
+  geom_line(size=2) + geom_point(size=5) +  
+  ylab("Percentage of Households")
+
+
+# Example of redoing labels and colors
+ggplot(predictionMap, aes(x = long, y = lat, group = group, fill = TestPredictionBinary))+ geom_polygon(color = "black") + scale_fill_gradient(low = "blue", high = "red", guide = "legend", breaks= c(0,1), labels = c("Democrat", "Republican"), name = "Prediction 2012")
+
+
+
+# Example of node graph
+library(igraph)
+g = graph.data.frame(edges, FALSE, users)
+plot(g, vertex.size=5, vertex.label=NA)
+
+##Check degrees
+degree(g)
+## Change size based on freq
+V(g)$size = degree(g)/2+2
+plot(g, vertex.label=NA)
+
+## Change color
+V(g)$color = "black"
+V(g)$color[V(g)$gender == "A"] = "red"
+V(g)$color[V(g)$gender == "B"] = "gray"
+
+# Word Cloud
+Create Bag of words but do not stem
+install wordcloud
+wordcloud(colnames(allTweets), colSums(allTweets))
+
+## Center Cloud
+wordcloud(colnames(allTweets), colSums(allTweets), random.order=FALSE)
+
+## Color Brewer 
+As the color
+brewer.pal()
+display.brewer.all()
+Example to wordcloud
+wordcloud(colnames(allTweets), colSums(allTweets), random.order=FALSE, colors=brewer.pal(9, "Blues")[c(-1, -2, -3, -4)])
+
